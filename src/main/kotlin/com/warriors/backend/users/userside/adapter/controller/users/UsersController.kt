@@ -4,6 +4,7 @@ import CreateUserRestRessource
 import UsersControllerDocumentation
 import com.warriors.backend.users.domain.model.User
 import com.warriors.backend.users.domain.usecase.CreateUser
+import com.warriors.backend.users.domain.usecase.GetUserById
 import com.warriors.backend.users.serverside.mapper.UserDocumentMapper.toEntity
 import com.warriors.backend.users.userside.mapper.UsersMapper.toRestRessoure
 import com.warriors.backend.users.userside.mapper.UsersMapper.toUser
@@ -11,12 +12,14 @@ import com.warriors.backend.users.userside.restressources.UserRestRessource
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.net.URI
+import java.util.UUID
 
 
 @RestController
 @RequestMapping("/v1/user")
 class UsersController(
-    val createUserUsecase : CreateUser
+    val createUserUsecase : CreateUser,
+    val getUserById: GetUserById
 ) : UsersControllerDocumentation {
 
 
@@ -33,7 +36,7 @@ class UsersController(
     }
 
     @GetMapping("/{id}")
-    override fun getById(@PathVariable id: String): ResponseEntity<UserRestRessource> {
-        TODO("Not yet implemented")
+    override fun getById(@PathVariable id: UUID): ResponseEntity<UserRestRessource> {
+        return ResponseEntity.ok(getUserById(id).toRestRessoure())
     }
 }
