@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
+import java.util.UUID
 
 interface UsersControllerDocumentation {
     @ApiResponses(
@@ -59,6 +60,6 @@ interface UsersControllerDocumentation {
         description = "Get the wanted user by his Id",
         security = [SecurityRequirement(name = "")]
     )
-    fun getById(@PathVariable id: String): ResponseEntity<UserRestRessource>
+    fun getById(@PathVariable id: UUID): ResponseEntity<UserRestRessource>
 
 }

@@ -2,7 +2,9 @@ package com.warriors.backend.users.userside.adapter.controller.users
 
 import com.warriors.backend.users.domain.exception.MailInvalidException
 import com.warriors.backend.users.serverside.exception.UserAlreadyExistException
+import com.warriors.backend.users.serverside.exception.UserDontExistException
 import io.swagger.v3.oas.annotations.Hidden
+import org.springframework.boot.actuate.autoconfigure.observation.ObservationProperties
 import org.springframework.http.HttpStatus
 import org.springframework.http.ProblemDetail
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -28,6 +30,11 @@ class UserControllerAdvice {
     @ResponseStatus(HttpStatus.CONFLICT)
     fun error409(exception: UserAlreadyExistException): ProblemDetail{
         return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT,exception.message)
+    }
+    @ExceptionHandler(UserDontExistException::class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    fun error404(exception: UserDontExistException) : ProblemDetail{
+        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.message)
     }
 
 }
