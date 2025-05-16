@@ -4,6 +4,7 @@ import CreateUserRestRessource
 import UsersControllerDocumentation
 import com.warriors.backend.users.domain.model.User
 import com.warriors.backend.users.domain.usecase.CreateUser
+import com.warriors.backend.users.domain.usecase.GetAllUsers
 import com.warriors.backend.users.domain.usecase.GetUserById
 import com.warriors.backend.users.serverside.mapper.UserDocumentMapper.toEntity
 import com.warriors.backend.users.userside.mapper.UsersMapper.toRestRessoure
@@ -19,7 +20,8 @@ import java.util.UUID
 @RequestMapping("/v1/user")
 class UsersController(
     val createUserUsecase : CreateUser,
-    val getUserById: GetUserById
+    val getUserById: GetUserById,
+    val getAllUsers: GetAllUsers
 ) : UsersControllerDocumentation {
 
 
@@ -31,8 +33,9 @@ class UsersController(
     }
 
     @GetMapping
-    override fun getAllUsers(): ResponseEntity<List<UserRestRessource>> {
-        TODO("Not yet implemented")
+    override fun getAll(): ResponseEntity<List<UserRestRessource>> {
+        val users = getAllUsers()
+        return ResponseEntity.ok(users.map { it.toRestRessoure() })
     }
 
     @GetMapping("/{id}")
