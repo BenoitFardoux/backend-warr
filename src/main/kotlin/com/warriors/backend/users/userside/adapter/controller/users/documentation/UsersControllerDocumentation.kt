@@ -39,7 +39,7 @@ interface UsersControllerDocumentation {
         description = "Get the list of all the users in the database",
         security = [SecurityRequirement(name = "")]
     )
-    fun getAllUsers() : ResponseEntity<List<UserRestRessource>>
+    fun getAll() : ResponseEntity<List<UserRestRessource>>
 
 
     @ApiResponses(

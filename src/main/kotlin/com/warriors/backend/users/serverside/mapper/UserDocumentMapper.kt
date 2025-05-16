@@ -1,10 +1,10 @@
 package com.warriors.backend.users.serverside.mapper
 
 import com.warriors.backend.users.domain.model.User
-import com.warriors.backend.users.serverside.dto.UserDocument
+import com.warriors.backend.users.serverside.dto.UserEntity
 
 object UserDocumentMapper {
-    fun UserDocument.toUser(): User {
+    fun UserEntity.toUser(): User {
         return User(
             id = this.id,
             username = this.username,
@@ -15,8 +15,8 @@ object UserDocumentMapper {
             validated = false,
         )
     }
-    fun User.toEntity(): UserDocument {
-        return UserDocument(
+    fun User.toEntity(): UserEntity {
+        return UserEntity(
             id = this.id,
             username = this.username,
             email = this.email,
