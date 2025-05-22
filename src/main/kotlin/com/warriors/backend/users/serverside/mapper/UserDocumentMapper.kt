@@ -18,9 +18,9 @@ object UserDocumentMapper {
     fun User.toEntity(): UserEntity {
         return UserEntity(
             id = this.id,
-            username = this.username,
+            userUsername = this.username,
             email = this.email,
-            password = this.password,
+            userPassword = this.password,
             createdAt = this.createdAt,
             updatedAt = this.updatedAt,
             validated = false,
