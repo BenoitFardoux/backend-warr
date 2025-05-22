@@ -1,10 +1,12 @@
 package com.warriors.backend.users.userside.adapter.controller.users
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.warriors.backend.users.domain.usecase.CreateUser
 import com.warriors.backend.users.fixture.UserFixture
 import com.warriors.backend.users.serverside.adapter.mysql.repository.UsersMySqlRepository
 import com.warriors.backend.users.serverside.dto.UserEntity
 import com.warriors.backend.users.serverside.mapper.UserDocumentMapper.toEntity
+import com.warriors.backend.users.serverside.mapper.UserDocumentMapper.toUser
 import com.warriors.backend.users.userside.mapper.UsersMapper.toUser
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -20,8 +22,6 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import java.util.UUID
-import javax.print.attribute.standard.Media
-
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -30,6 +30,9 @@ import javax.print.attribute.standard.Media
 class UsersControllerTest {
     @Autowired
     private lateinit var usersMySqlRepository: UsersMySqlRepository
+
+    @Autowired
+    private lateinit var createUser: CreateUser
 
     @Autowired
     private lateinit var mockMvc: MockMvc
@@ -87,7 +90,7 @@ class UsersControllerTest {
         val goodUser = UserFixture.createUserRestRessource
         val secondUser = UserFixture.createUserRestRessource.copy(username = "utilisateur de test")
 
-        usersMySqlRepository.saveAndFlush<UserEntity>(goodUser.toUser().toEntity())
+        createUser(goodUser.toUser())
         // WHEN
         mockMvc.post("/v1/user"){
             contentType = MediaType.APPLICATION_JSON
@@ -107,7 +110,7 @@ class UsersControllerTest {
     fun `When i try to get a user and the user Exist i get the user`(){
         // GIVEN
         val userEntity = UserFixture.userEntity
-        val savedUser = usersMySqlRepository.saveAndFlush(userEntity)
+        val savedUser = createUser(userEntity.toUser())
 
         // WHEN
         mockMvc.get("/v1/user/${savedUser.id}"){
@@ -157,7 +160,7 @@ class UsersControllerTest {
     fun `When i try to get all users and they have user in database i get all the users`(){
         // GIVEN
         val userEntity = UserFixture.userEntity
-        val savedUser = usersMySqlRepository.saveAndFlush(userEntity)
+        val savedUser = createUser(userEntity.toUser())
 
 
         // WHEN
@@ -176,7 +179,7 @@ class UsersControllerTest {
     fun `When i try to get all users and they have no user in database i get all the users`(){
         // GIVEN
         val userEntity = UserFixture.userEntity
-        val savedUser = usersMySqlRepository.saveAndFlush(userEntity)
+        val savedUser = createUser(userEntity.toUser())
 
 
         // WHEN
