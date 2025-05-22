@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository
 class CreateUserRepository(val usersMySqlRepository: UsersMySqlRepository) : CreateUserServersidePort {
     override fun invoke(user: User): User {
         usersMySqlRepository.getUserDocumentByEmail(user.email)?.let { throw UserAlreadyExistException("the user with mail ${user.email} already exists.") }
-
-        return usersMySqlRepository.saveAndFlush<UserEntity>(user.toEntity()).toUser()
+        val createdUser = usersMySqlRepository.saveAndFlush<UserEntity>(user.toEntity())
+        return createdUser.toUser()
     }
 }
