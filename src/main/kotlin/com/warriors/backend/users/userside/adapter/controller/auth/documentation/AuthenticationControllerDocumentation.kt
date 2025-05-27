@@ -4,7 +4,6 @@ import CreateUserRestRessource
 import com.warriors.backend.users.userside.restressources.LoginResponse
 import com.warriors.backend.users.userside.restressources.UserLoginRestRessource
 import com.warriors.backend.users.userside.restressources.UserRestRessource
-import io.micrometer.core.ipc.http.HttpSender.Response
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
