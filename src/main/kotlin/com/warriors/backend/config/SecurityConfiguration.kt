@@ -30,8 +30,8 @@ class SecurityConfiguration {
                 it.requestMatchers(HttpMethod.GET, *PUBLIC_GET_REQUEST_MANAGER).permitAll()
                 // change to use different URI
                 it.requestMatchers(HttpMethod.DELETE, *PUBLIC_POST_REQUEST_MANAGER).permitAll()
-                it.requestMatchers(HttpMethod.PATCH, *PUBLIC_POST_REQUEST_MANAGER).permitAll()
-                it.requestMatchers(HttpMethod.PUT, *PUBLIC_POST_REQUEST_MANAGER).permitAll()
+//                it.requestMatchers(HttpMethod.PATCH, *PUBLIC_POST_REQUEST_MANAGER).permitAll()
+//                it.requestMatchers(HttpMethod.PUT, *PUBLIC_POST_REQUEST_MANAGER).permitAll()
                 it.requestMatchers(HttpMethod.POST, *PUBLIC_POST_REQUEST_MANAGER).permitAll()
             }
         return http.build()
