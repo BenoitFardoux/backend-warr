@@ -1,4 +1,5 @@
 package com.warriors.backend.config
+import com.warriors.backend.users.serverside.exception.UserDontExistException
 import com.warriors.backend.utils.JwtService
 import org.springframework.stereotype.Component
 import jakarta.servlet.FilterChain
@@ -34,14 +35,13 @@ class JwtAuthentificationFilter(
             return
         }
 
-        try {
             val jwt = authHeader.substring(7)
             val userEmail: String = jwtService.extractUsername(jwt)
 
             val authentication: Authentication? = SecurityContextHolder.getContext().authentication
 
             if (authentication == null) {
-                val userDetails = userDetailsService.loadUserByUsername(userEmail)
+                val userDetails = userDetailsService.loadUserByUsername(userEmail) ?: throw UserDontExistException("user with mail ${userEmail} don't exist")
 
                 if (jwtService.isTokenValid(jwt, userDetails)) {
                     val authToken = UsernamePasswordAuthenticationToken(
@@ -56,18 +56,7 @@ class JwtAuthentificationFilter(
             }
 
             filterChain.doFilter(request, response)
-        } catch (exception: Exception) {
-            System.err.println(exception.toString())
-            response.status = HttpServletResponse.SC_INTERNAL_SERVER_ERROR
-            response.contentType = "application/json"
-            response.characterEncoding = "UTF-8"
-            val jsonResponse = """{"error": "${exception.message}"}"""
-            response.writer.apply {
-                write(jsonResponse)
-                flush()
-            }
-            handlerExceptionResolver.resolveException(request, response, null, exception)
-        }
+
     }
 
     override fun shouldNotFilter(request: HttpServletRequest): Boolean {

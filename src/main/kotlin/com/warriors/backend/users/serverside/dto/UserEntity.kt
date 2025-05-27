@@ -37,5 +37,5 @@ data class UserEntity(
         return userPassword
     }
 
-    override fun getUsername(): String = userUsername
+    override fun getUsername(): String = email
 }
