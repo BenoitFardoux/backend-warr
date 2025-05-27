@@ -1,0 +1,86 @@
+package com.warriors.backend.config
+import com.warriors.backend.users.serverside.exception.UserDontExistException
+import com.warriors.backend.utils.JwtService
+import org.springframework.stereotype.Component
+import jakarta.servlet.FilterChain
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
+import org.springframework.lang.NonNull
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.userdetails.UserDetailsService
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
+import org.springframework.web.filter.OncePerRequestFilter
+import org.springframework.web.servlet.HandlerExceptionResolver
+
+
+@Component
+class JwtAuthentificationFilter(
+
+    private val jwtService: JwtService,
+    private val userDetailsService: UserDetailsService,
+    private val handlerExceptionResolver: HandlerExceptionResolver
+) : OncePerRequestFilter() {
+
+    override fun doFilterInternal(
+        @NonNull request: HttpServletRequest,
+        @NonNull response: HttpServletResponse,
+        @NonNull filterChain: FilterChain
+    ) {
+        val authHeader = request.getHeader("Authorization")
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response)
+            return
+        }
+
+            val jwt = authHeader.substring(7)
+            val userEmail: String = jwtService.extractUsername(jwt)
+
+            val authentication: Authentication? = SecurityContextHolder.getContext().authentication
+
+            if (authentication == null) {
+                val userDetails = userDetailsService.loadUserByUsername(userEmail) ?: throw UserDontExistException("user with mail ${userEmail} don't exist")
+
+                if (jwtService.isTokenValid(jwt, userDetails)) {
+                    val authToken = UsernamePasswordAuthenticationToken(
+                        userDetails,
+                        null,
+                        userDetails.authorities
+                    )
+
+                    authToken.details = WebAuthenticationDetailsSource().buildDetails(request)
+                    SecurityContextHolder.getContext().authentication = authToken
+                }
+            }
+
+            filterChain.doFilter(request, response)
+
+    }
+
+    override fun shouldNotFilter(request: HttpServletRequest): Boolean {
+        val path = request.requestURI
+        val method = request.method
+        val allowedGetPaths: Array<String> = SecurityConfiguration.PUBLIC_GET_REQUEST_MANAGER
+        val allowedPostPaths: Array<String> = SecurityConfiguration.PUBLIC_POST_REQUEST_MANAGER
+
+        // Check if the request is a GET request and matches the allowed GET paths
+        if (method == "GET" && allowedGetPaths.any { allowedPath ->
+                val sanitizedPath = allowedPath.replace("/*", "").replace("/**", "")
+                path.contains(sanitizedPath)
+            }) {
+            return true
+        }
+
+        // Check if the request is a POST request and matches the allowed POST paths
+        if (method == "POST" && allowedPostPaths.any { allowedPath ->
+                val sanitizedPath = allowedPath.replace("/*", "").replace("/**", "")
+                path.contains(sanitizedPath)
+            }) {
+            return true
+        }
+
+        return false
+    }
+}
