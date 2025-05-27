@@ -50,4 +50,6 @@ interface UsersControllerDocumentation {
     )
     fun getById(@PathVariable id: UUID): ResponseEntity<UserRestRessource>
 
+    fun delete(): ResponseEntity<String>
+
 }
